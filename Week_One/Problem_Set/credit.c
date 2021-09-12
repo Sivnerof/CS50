@@ -2,6 +2,14 @@
 #include <cs50.h>
 #include <math.h>
 
+/* 
+An application that uses Luhn's algorithm to validate a credit card number,
+and checks who the issuer is.
+
+This was a real headache to code without the use of arrays or functions.
+But was definetly worth it. 
+*/
+
 int main(void)
 {
     long cardNumber;
