@@ -2,7 +2,7 @@
 #include <cs50.h>
 #include <math.h>
 
-int main (void)
+int main(void)
 {
     long cardNumber;
 
@@ -10,7 +10,7 @@ int main (void)
     {
         cardNumber = get_long("Card Number?");
     }
-    while(cardNumber < 1);
+    while (cardNumber < 1);
 
     long cardNumberCopy = 0;
     int cardLength = 0;
@@ -19,12 +19,11 @@ int main (void)
     int carryBit;
     int sumOfMultiplied = 0;
     int totalSumValidated;
-    long cardNumberCopyTwo = cardNumber;
-    bool notAmex = false;
-    bool notMastercard = false;
-    bool notVisa = false;
+    bool isAmex = false;
+    bool masterCard = false;
+    bool isVisa = false;
 
-    while(cardNumber > 0)
+    while (cardNumber > 0)
     {
         //Start card length counter up here to use as if else modulo / counter for card length
         cardLength++;
@@ -33,18 +32,19 @@ int main (void)
         cardNumberCopy = cardNumber % 10;
 
         //Every other starting from right most
-        if(cardLength % 2 == 0)
+        if (cardLength % 2 == 0)
         {
             //Multiply by two
             cardNumberCopy *= 2;
 
             //Handle carry bit if sum is overflowed
             //Storing sum in one variable and carry in another adding them and bringing them back together
-            if(cardNumberCopy > 9)
+            if (cardNumberCopy > 9)
             {
                 //Right most bit used then knocked off
                 sumBit = cardNumberCopy % 10;
-                cardNumberCopy /=10;
+                cardNumberCopy /= 10;
+
                 //Now repeated with the left bit
                 carryBit = cardNumberCopy % 10;
                 cardNumberCopy = sumBit + carryBit;
@@ -62,6 +62,28 @@ int main (void)
 
         }
 
+        //Here we set some booleans to true if the first two digits seem to belong to a certain issuer
+
+        //Mastercard
+        if ((cardNumber % 100 == 51 || cardNumber % 100 == 52 || cardNumber % 100 == 53 || cardNumber % 100 == 54
+             || cardNumber % 100 == 55) && cardNumber < 99)
+        {
+            masterCard = true;
+        }
+
+        //American Express
+        else if ((cardNumber % 100 == 34 || cardNumber % 100 == 37) && cardNumber < 99)
+        {
+
+            isAmex = true;
+        }
+
+        //Visa, here we use mod and card number length 10 instead because Visa is recognized by the single digit 4
+        else if ((cardNumber % 10 == 4) && cardNumber < 10)
+        {
+            isVisa = true;
+        }
+
 
         //Knock off right most digit and repeat the process
         cardNumber = cardNumber / 10;
@@ -70,33 +92,28 @@ int main (void)
     //Now take everything, add it together and modulo again to check that last digit is zero
     totalSumValidated = ((sumOfNonMultiplied + sumOfMultiplied) % 10);
 
-    //Now that card is valid and we have length, we need to figure out who the issuer is
-    while(cardNumberCopyTwo > 0)
+    //Final verification process
+    if (totalSumValidated == 0)
     {
-        if((cardNumberCopyTwo % 100 == 51 || cardNumberCopyTwo % 100 == 52 || cardNumberCopyTwo % 100 == 53 || cardNumberCopyTwo % 100 == 54 || cardNumberCopyTwo % 100 == 55) && cardNumberCopyTwo < 99 && cardLength == 16 && totalSumValidated == 0)
+        if (masterCard == true && cardLength == 16)
         {
-            //Mastercard
             printf("MASTERCARD\n");
-            notMastercard = true;
         }
-        else if((cardNumberCopyTwo % 100 == 34 || cardNumberCopyTwo % 100 == 37) && cardNumberCopyTwo < 99 && cardLength == 15 && totalSumValidated == 0)
+        else if (isAmex == true && cardLength == 15)
         {
-            //Amex
             printf("AMEX\n");
-            notAmex = true;
         }
-        else if((cardNumberCopyTwo % 10 == 4) && cardNumberCopyTwo < 10 && (cardLength == 13 || cardLength == 16) && totalSumValidated == 0)
+        else if (isVisa == true && (cardLength == 13 || cardLength == 16))
         {
-            //Visa
             printf("VISA\n");
-            notVisa = true;
         }
-        cardNumberCopyTwo /= 10;
+        else
+        {
+            printf("INVALID\n");
+        }
     }
-    if((totalSumValidated != 0) || (cardLength == 14) || (cardLength > 16) || (cardLength < 13) || (notAmex == true && notMastercard == true && notVisa == true))
+    else
     {
         printf("INVALID\n");
     }
 }
-
-
