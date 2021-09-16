@@ -8,6 +8,8 @@
     A program that uses a Caesar Cipher on user provided plaintext where the key to be used is inputted through a command line argument.
 */
 
+string caesarCipher(int rotation, string userText);
+
 int main(int argc, string argv[])
 {
     //Handle too many arguments
@@ -27,24 +29,38 @@ int main(int argc, string argv[])
         }
     }
 
-    printf("%s\n", argv[1]);
-    //string plainText = get_string("plaintext: ");
+    //Result is a valid Key
+    int key = atoi(argv[1]);
+
+    //User Inputs
+    string plainText = get_string("plaintext: ");
+
+    //Pass To function for rotation
+    string cipherText = caesarCipher(key, plainText);
+
     //printf("ciphertext: \n");
 
     return 0;
 }
 
+string caesarCipher(int rotation, string userText)
+{
+    string testing;
+    for(int i = 0, n = strlen(userText); i < n; i++)
+    {
+        if(isalpha(userText[i]))
+        {
+            userText[i] += 1;
+        }
+        //printf("%c", userText[i]);
+        testing = userText;
+    }
+    return "test";
+}
+
 /*
 
-Usage: ./caesar key
 
-At the time the user executes the program, they should decide, by providing a command-line argument,
-on what the key should be in the secret message they’ll provide at runtime.
-We shouldn’t necessarily assume that the user’s key is going to be a number;
-though you may assume that, if it is a number, it will be a positive integer.
-
-More formally, Caesar’s algorithm (i.e., cipher) encrypts messages by “rotating” each letter by k positions.
-More formally, if p is some plaintext (i.e., an unencrypted message),
 pi is the ith character in p, and k is a secret key (i.e., a non-negative integer), then each letter, ci, in the ciphertext, c, is computed as
 
 ci = (pi + k) % 26
@@ -59,9 +75,3 @@ this time, a key, k, of 3.
 And so his plaintext, p, is Hi, in which case his plaintext’s first character, p0, is H (aka 7), and his plaintext’s second character, p1, is i (aka 8).
 His ciphertext’s first character, c0, is thus K, and his ciphertext’s second character, c1, is thus L.
 
-
-
-
-
-
-*/
