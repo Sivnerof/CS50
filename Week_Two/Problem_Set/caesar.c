@@ -13,16 +13,16 @@ char rotatePlain(char individualChar, int keyUsed);
 int main(int argc, string argv[])
 {
     //Handles too many arguments
-    if(argc != 2)
+    if (argc != 2)
     {
         printf("Usage: ./caesar key\n");
         return 1;
     }
 
     //Handle non-numeric arguments
-    for(int i = 0, n = strlen(argv[1]); i < n; i++)
+    for (int i = 0, n = strlen(argv[1]); i < n; i++)
     {
-        if(!isdigit(argv[1][i]))
+        if (!isdigit(argv[1][i]))
         {
             printf("Usage: ./caesar key\n");
             return 1;
@@ -40,7 +40,7 @@ int main(int argc, string argv[])
     printf("ciphertext: ");
 
     //Individual chars sent to function
-    for(int i = 0, n = strlen(plainText); i < n; i++)
+    for (int i = 0, n = strlen(plainText); i < n; i++)
     {
         singleRot = rotatePlain(plainText[i], key);
         printf("%c", singleRot);
@@ -53,9 +53,29 @@ int main(int argc, string argv[])
 //Rotate Plain Text
 char rotatePlain(char individualChar, int keyUsed)
 {
-    if(isalpha(individualChar))
+    //Filter out symbols and non-alphabetic
+    if (isalpha(individualChar))
     {
-        individualChar += keyUsed;
+        //Sort upper alpha
+        if (isupper(individualChar))
+        {
+            //Take char and subtract its ASCII value
+            //Use Caesar Cipher formula on result
+            //c[i] = (p[i] + k) % 26
+            //Bring back alpha value
+            individualChar = individualChar - 65;
+            individualChar = ((individualChar + keyUsed) % 26);
+            individualChar = individualChar + 65;
+        }
+
+        //Sort lower alpha
+        else if (islower(individualChar))
+        {
+            //Same as above with upper alpha
+            individualChar = individualChar - 97;
+            individualChar = ((individualChar + keyUsed) % 26);
+            individualChar = individualChar + 97;
+        }
     }
     return individualChar;
 }
