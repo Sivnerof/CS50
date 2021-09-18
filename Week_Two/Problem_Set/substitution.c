@@ -17,6 +17,7 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|
 */
 
 bool validCheck(string userKey, char neededChar);
+char substituteChar(char individualChar, string keyArray, string alphabetArray);
 
 int main(int argc, string argv[])
 
@@ -55,7 +56,22 @@ int main(int argc, string argv[])
         }
     }
 
-    printf("Argv: %s\n", argv[1]);
+    //Store valid key
+    string key = (argv[1]);
+
+    //Grab users plain text
+    string plainText = get_string("plaintext: ");
+
+    printf("ciphertext: ");
+    for (int i = 0, n = strlen(plainText); i < n; i++)
+    {
+        char cipherChar = substituteChar(plainText[i], key, neededLetters);
+        printf("%c", cipherChar);
+    }
+
+    printf("\n");
+
+    //Do something here
 
     return 0;
 }
@@ -94,9 +110,29 @@ bool validCheck(string userKey, char neededChar)
     return x;
 }
 
+char substituteChar(char individualChar, string keyArray, string alphabetArray)
+{
+    char subChar;
+    int x;
+    for (int i = 0, n = strlen(alphabetArray); i < n; i++)
+    {
+        if(individualChar == alphabetArray[i])
+        {
+            x = i;
+            for (int j = 0, k = strlen(keyArray); j < k; j++)
+            {
+                if(j == x)
+                {
+                    subChar = keyArray[i];
+                }
+            }
+        }
+    }
+    return subChar;
+}
+
 /*
 
-    Your program must output plaintext: (without a newline) and then prompt the user for a string of plaintext (using get_string).
     Your program must output ciphertext: (without a newline) followed by the plaintext’s corresponding ciphertext, with each alphabetical character in the plaintext substituted for the corresponding character in the ciphertext; non-alphabetical characters should be outputted unchanged.
     Your program must preserve case: capitalized letters must remain capitalized letters; lowercase letters must remain lowercase letters.
     After outputting ciphertext, you should print a newline. Your program should then exit by returning 0 from main.
