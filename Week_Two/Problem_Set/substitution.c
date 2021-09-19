@@ -56,22 +56,36 @@ int main(int argc, string argv[])
         }
     }
 
-    //Store valid key
+    //Store key copy
     string key = (argv[1]);
 
     //Grab users plain text
     string plainText = get_string("plaintext: ");
 
+    //Output enciphered result
     printf("ciphertext: ");
+
+    //Handle symbols, spaces, non-alphabetical in function before passing off
     for (int i = 0, n = strlen(plainText); i < n; i++)
     {
-        char cipherChar = substituteChar(plainText[i], key, neededLetters);
+        char cipherChar;
+
+        //Pass to helper function
+        if (isalpha(plainText[i]))
+        {
+            cipherChar = substituteChar(plainText[i], key, neededLetters);
+        }
+
+        //Output all others
+        else
+        {
+            cipherChar = plainText[i];
+        }
+
         printf("%c", cipherChar);
     }
 
     printf("\n");
-
-    //Do something here
 
     return 0;
 }
@@ -112,28 +126,58 @@ bool validCheck(string userKey, char neededChar)
 
 char substituteChar(char individualChar, string keyArray, string alphabetArray)
 {
-    char subChar;
+    //Define two variables, one for result when found, other to find position in the alphabet array
+    char subChar = 0;
     int x;
-    for (int i = 0, n = strlen(alphabetArray); i < n; i++)
+
+    //Preserve case
+    if (isupper(individualChar))
     {
-        if(individualChar == alphabetArray[i])
+        //Loop through first array
+        for (int i = 0, n = strlen(alphabetArray); i < n; i++)
         {
-            x = i;
-            for (int j = 0, k = strlen(keyArray); j < k; j++)
+            //Catch and set position to variable
+            if (individualChar == alphabetArray[i])
             {
-                if(j == x)
+                x = i;
+
+                //Loop that many times through second array
+                for (int j = 0, k = strlen(keyArray); j < k; j++)
                 {
-                    subChar = keyArray[i];
+                    //Catch same position in second array
+                    if (j == x)
+                    {
+                        //Bring back the result for cipher
+                        subChar = toupper(keyArray[i]);
+                    }
+                }
+            }
+        }
+    }
+
+    //Same as above, preserve case
+    if (islower(individualChar))
+    {
+        //Except here we set to uppercase so we can match first array
+        individualChar = toupper(individualChar);
+
+        //Loop through first array, catch position.
+        for (int i = 0, n = strlen(alphabetArray); i < n; i++)
+        {
+            if (individualChar == alphabetArray[i])
+            {
+                x = i;
+
+                //Use x as the stopping point and bring back the result
+                for (int j = 0, k = strlen(keyArray); j < k; j++)
+                {
+                    if (j == x)
+                    {
+                        subChar = tolower(keyArray[i]);
+                    }
                 }
             }
         }
     }
     return subChar;
 }
-
-/*
-
-    Your program must output ciphertext: (without a newline) followed by the plaintext’s corresponding ciphertext, with each alphabetical character in the plaintext substituted for the corresponding character in the ciphertext; non-alphabetical characters should be outputted unchanged.
-    Your program must preserve case: capitalized letters must remain capitalized letters; lowercase letters must remain lowercase letters.
-    After outputting ciphertext, you should print a newline. Your program should then exit by returning 0 from main.
-*/
