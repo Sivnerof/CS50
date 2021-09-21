@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
+/*
+    A program that takes names of candidates as command line arguments,
+    along with individual votes for said candidates and produces the results of the plurality election.
+*/
+
 // Max number of candidates
 #define MAX 9
 
@@ -66,13 +71,22 @@ int main(int argc, string argv[])
 // Update vote totals given a new vote
 bool vote(string name)
 {
-    // TODO
+    // TODO loop through and compare name increment vote
+    for (int i = 0; i < candidate_count; i++)
+    {
+        if (strcmp(candidates[i].name, name) == 0)
+        {
+            candidates[i].votes += 1;
+            return true;
+        }
+    }
     return false;
+
 }
 
 // Print the winner (or winners) of the election
 void print_winner(void)
 {
-    // TODO
+    // TODO loop through and count winner
     return;
 }
