@@ -1,11 +1,11 @@
-sort1 uses: TODO
+sort1 uses: Bubble
 
-How do you know?: TODO
+How do you know?: Bubble had a high run time on random and reverse, but sorted exited quickly.
 
-sort2 uses: TODO
+sort2 uses: Merge
 
-How do you know?: TODO
+How do you know?: Merge had the best time out of the three, also had the same run time regardless of sorted or random files. Theta.
 
-sort3 uses: TODO
+sort3 uses: Selection
 
-How do you know?: TODO
+How do you know?: Selection had the same run time regardless of sorted or random file. Took a long time to run. Theta.

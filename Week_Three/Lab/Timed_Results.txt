@@ -1,0 +1,61 @@
+Figure out what sorting algorithm is being used in three binary files,
+which are missing their source code.
+Time the results of the files against nine different text files.
+Three randomly sorted text files of different sizes.
+Three reverse sorted text files.
+Finally, three already sorted text files.
+Take the timed results and figure out upper and lower bound run times.
+Match the binary files to their algorithm.
+
+
+Sort1 results-
+    random5000.txt = real time 0m0.080s
+    random10000.txt = real time 0m0.534s
+    random50000.txt = real time 0m15.522s
+
+    reversed5000.txt = real time 0m0.069s
+    reversed10000.txt = real time 0m0.402s
+    reversed50000.txt = real time 0m12.634s
+
+    sorted5000.txt = real time 0m0.025s
+    sorted10000.txt = real time 0m0.040s
+    sorted50000.txt = real time 0m2.886s
+        Answer = Bubble Sort.
+        Reason = Slow run time on reversed and random text files.
+                 Exited quickly on sorted files.
+                 Big O of n squared upper bound run time.
+                 Omega of n lower bound run time.
+
+
+Sort2 results-
+    random5000.txt = real time 0m0.019s
+    random10000.txt = real time 0m0.097s
+    random50000.txt = real time 0m3.174s
+
+    reversed5000.txt = real time 0m0.010s
+    reversed10000.txt = real time 0m0.091s
+    reversed50000.txt = real time 0m1.935s
+
+    sorted5000.txt = real time 0m0.009s
+    sorted10000.txt = real time 0m0.023s
+    sorted50000.txt = real time 0m1.643s
+        Answer = Merge Sort.
+        Reason = Quickest of the three programs regardless of random, reverse, or sorted.
+                 Theta run time.
+
+
+Sort3 results-
+    random5000.txt = real time 0m0.079s
+    random10000.txt = real time 0m0.167s
+    random50000.txt = real time 0m7.655s
+
+    reversed5000.txt = real time 0m0.035s
+    reversed10000.txt = real time 0m0.284s
+    reversed50000.txt = real time 0m7.678s
+
+    sorted5000.txt = real time 0m0.036s
+    sorted10000.txt = real time 0m0.248s
+    sorted50000.txt = real time 0m8.260s
+        Answer = Selection Sort.
+        Reason = Equal run time, no matter the text file, sorted or unsorted.
+                 Theta run time, slower than sort2 overall and slower than sort1 on sorted.
