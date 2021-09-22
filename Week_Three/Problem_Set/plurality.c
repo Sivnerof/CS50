@@ -118,33 +118,13 @@ void print_winner(void)
         }
     }
 
-    // Now that array is sorted, winner will always be at the end
-    for (int i = candidate_count - 1; i > 0; i--)
+    // Now that array is sorted, compare all to last position and print equals
+    for (int i = 0; i < candidate_count; i++)
     {
-        // Print the last name in the array as winner
-        if (candidates[i].votes > candidates[i - 1].votes)
+        if (candidates[i].votes == candidates[candidate_count - 1].votes)
         {
             printf("%s\n", candidates[i].name);
-            return;
-        }
-
-        // In case of two way tie
-        else if (candidates[i].votes == candidates[i - 1].votes && candidates[i].votes == candidates[i - 2].votes)
-        {
-            printf("%s\n", candidates[i].name);
-            printf("%s\n", candidates[i - 1].name);
-            printf("%s\n", candidates[i - 2].name);
-            return;
-        }
-
-        // If the loop reaches here it's a 3 way tie
-        else if (candidates[i].votes == candidates[i - 1].votes)
-        {
-            printf("%s\n", candidates[i].name);
-            printf("%s\n", candidates[i - 1].name);
-            return;
         }
     }
-
     return;
 }
