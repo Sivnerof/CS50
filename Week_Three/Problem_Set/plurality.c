@@ -71,7 +71,7 @@ int main(int argc, string argv[])
 // Update vote totals given a new vote
 bool vote(string name)
 {
-    // TODO loop through and compare name increment vote
+    // Loop through comparing name and incrementing their vote
     for (int i = 0; i < candidate_count; i++)
     {
         if (strcmp(candidates[i].name, name) == 0)
@@ -87,6 +87,64 @@ bool vote(string name)
 // Print the winner (or winners) of the election
 void print_winner(void)
 {
-    // TODO loop through and count winner
+    // Variables to be used for swapping name/votes in selection sort, and one to track position
+    int position, swapInt;
+    string swapName;
+
+    for (int i = 0; i < (candidate_count - 1); i++)
+    {
+        // Set Position
+        position = i;
+
+        // Nested loop comparing first and second locations in array
+        for (int j = i + 1; j < candidate_count; j++)
+        {
+            if (candidates[position].votes > candidates[j].votes)
+            {
+                // Change position
+                position = j;
+            }
+        }
+
+        if (position != i)
+        {
+            // Move names and votes to their expected positions using container variables
+            swapName = candidates[i].name;
+            swapInt = candidates[i].votes;
+            candidates[i].name = candidates[position].name;
+            candidates[i].votes = candidates[position].votes;
+            candidates[position].name = swapName;
+            candidates[position].votes = swapInt;
+        }
+    }
+
+    // Now that array is sorted, winner will always be at the end
+    for (int i = candidate_count - 1; i > 0; i--)
+    {
+        // Print the last name in the array as winner
+        if (candidates[i].votes > candidates[i - 1].votes)
+        {
+            printf("%s\n", candidates[i].name);
+            return;
+        }
+
+        // In case of two way tie
+        else if (candidates[i].votes == candidates[i - 1].votes && candidates[i].votes == candidates[i - 2].votes)
+        {
+            printf("%s\n", candidates[i].name);
+            printf("%s\n", candidates[i - 1].name);
+            printf("%s\n", candidates[i - 2].name);
+            return;
+        }
+
+        // If the loop reaches here it's a 3 way tie
+        else if (candidates[i].votes == candidates[i - 1].votes)
+        {
+            printf("%s\n", candidates[i].name);
+            printf("%s\n", candidates[i - 1].name);
+            return;
+        }
+    }
+
     return;
 }
