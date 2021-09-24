@@ -133,7 +133,7 @@ bool vote(int voter, int rank, string name)
     for (int i = 0; i < candidate_count; i++)
     {
         // Catch candidate name and position in iteration
-        if(strcmp(candidates[i].name, name) == 0)
+        if (strcmp(candidates[i].name, name) == 0)
         {
             // Update the nested array with the location of candidate
             preferences[voter][rank] = i;
@@ -183,42 +183,48 @@ bool print_winner(void)
 // Return the minimum number of votes any remaining candidate has
 int find_min(void)
 {
-    // TODO
-    return 0;
+    // Set comparison variable to plus one of the max amount of voters
+    int minVotes = MAX_VOTERS + 1;
+
+    // Loop through all candidates all the while swapping their lowest values with minVotes
+    for (int i = 0; i < candidate_count; i++)
+    {
+        if (!candidates[i].eliminated)
+        {
+            if (candidates[i].votes < minVotes)
+            {
+                minVotes = candidates[i].votes;
+            }
+        }
+    }
+    return minVotes;
 }
 
 // Return true if the election is tied between all candidates, false otherwise
 bool is_tie(int min)
 {
-    // TODO
-    return false;
+    for (int i = 0; i < candidate_count; i++)
+    {
+        // Filter out invalid candidates and ones with non-min value
+        if (!candidates[i].eliminated && candidates[i].votes != min)
+        {
+            return false;
+        }
+    }
+    // If code reaches here, all were tied.
+    return true;
 }
 
 // Eliminate the candidate (or candidates) in last place
 void eliminate(int min)
 {
-    // TODO
+    for (int i = 0; i < candidate_count; i++)
+    {
+        // Flip boolean value to true if equal to min
+        if (candidates[i].votes == min)
+        {
+            candidates[i].eliminated = true;
+        }
+    }
     return;
 }
-
-/*
-
-    The function should return the minimum vote total for any candidate who is still in the election.
-    You’ll likely want to loop through the candidates to find the one who is both still in the election and has the fewest number of votes.
-    What information should you keep track of as you loop through the candidates?
-
-Complete the is_tie function.
-
-    The function takes an argument min, which will be the minimum number of votes that anyone in the election currently has.
-    The function should return true if every candidate remaining in the election has the same number of votes, and should return false otherwise.
-
-Hints
-
-    Recall that a tie happens if every candidate still in the election has the same number of votes. Note, too, that the is_tie function takes an argument min, which is the smallest number of votes any candidate currently has. How might you use that information to determine if the election is a tie (or, conversely, not a tie)?
-
-Complete the eliminate function.
-
-    The function takes an argument min, which will be the minimum number of votes that anyone in the election currently has.
-    The function should eliminate the candidate (or candidates) who have min number of votes.
-
-*/
