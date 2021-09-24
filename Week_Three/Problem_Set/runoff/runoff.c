@@ -150,19 +150,33 @@ void tabulate(void)
     // Loops through all voters
     for (int i = 0; i < voter_count; i++)
     {
+        // Loops through each candidate in ith voters selections
         for (int j = 0; j < candidate_count; j++)
         {
-
+            // Catches non valid entries
+            if (!candidates[preferences[i][j]].eliminated)
+            {
+                // Updates valid vote count, exits loop. Next voter up.
+                candidates[preferences[i][j]].votes++;
+                break;
+            }
         }
     }
-
     return;
 }
 
 // Print the winner of the election, if there is one
 bool print_winner(void)
 {
-    // TODO
+    // Check for majority of half the vote total
+    for (int i = 0; i < candidate_count; i++)
+    {
+        if (candidates[i].votes > voter_count / 2)
+        {
+            printf("%s\n", candidates[i].name);
+            return true;
+        }
+    }
     return false;
 }
 
@@ -189,30 +203,9 @@ void eliminate(int min)
 
 /*
 
-    The function should update the number of votes each candidate has at this stage in the runoff.
-    Recall that at each stage in the runoff, every voter effectively votes for their top-preferred candidate who has not already been eliminated.
-Hints
-    Recall that voter_count stores the number of voters in the election.
-    Recall that for a voter i, their top choice candidate is represented by preferences[i][0], their second choice candidate by preferences[i][1], etc.
-    Recall that the candidate struct has a field called eliminated, which will be true if the candidate has been eliminated from the election.
-    Recall that the candidate struct has a field called votes, which you’ll likely want to update for each voter’s preferred candidate.
-
-Complete the print_winner function.
-
-    If any candidate has more than half of the vote, their name should be printed to stdout and the function should return true.
-    If nobody has won the election yet, the function should return false.
-
-Hints
-
-    Recall that voter_count stores the number of voters in the election. Given that, how would you express the number of votes needed to win the election?
-
-Complete the find_min function.
-
     The function should return the minimum vote total for any candidate who is still in the election.
-
-Hints
-
-    You’ll likely want to loop through the candidates to find the one who is both still in the election and has the fewest number of votes. What information should you keep track of as you loop through the candidates?
+    You’ll likely want to loop through the candidates to find the one who is both still in the election and has the fewest number of votes.
+    What information should you keep track of as you loop through the candidates?
 
 Complete the is_tie function.
 
