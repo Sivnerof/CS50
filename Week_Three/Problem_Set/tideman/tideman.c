@@ -177,7 +177,37 @@ void add_pairs(void)
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(void)
 {
-    // TODO
+    // Variables for swapping and setting positions
+    int swapWinner, swapLoser, position;
+
+    // Loop through all winner, loser pairs
+    for (int i = 0; i < pair_count; i++)
+    {
+        // Set position (flag) to this current iteration
+        position = i;
+
+        // Side by side comparison, selection sort
+        for (int j = i + 1; j < pair_count; j++)
+        {
+            if (preferences[pairs[i].winner][pairs[i].loser] < preferences[pairs[j].winner][pairs[j].loser])
+            {
+                // Set flag
+                position = j;
+            }
+        }
+
+        // If here we need to swap
+        if (position != i)
+        {
+            // Use container variables to store swap pairs
+            swapWinner = pairs[i].winner;
+            swapLoser = pairs[i].loser;
+            pairs[i].winner = pairs[position].winner;
+            pairs[i].loser = pairs[position].loser;
+            pairs[position].winner = swapWinner;
+            pairs[position].loser = swapLoser;
+        }
+    }
     return;
 }
 
@@ -197,11 +227,6 @@ void print_winner(void)
 
 /*
 
-Complete the sort_pairs function.
-    The function should sort the pairs array in decreasing order of strength of victory,
-    where strength of victory is defined to be the number of voters who prefer the preferred candidate.
-    If multiple pairs have the same strength of victory, you may assume that the order does not matter.
-
 Complete the lock_pairs function.
     The function should create the locked graph,
     adding all edges in decreasing order of victory strength so long as the edge would not create a cycle.
@@ -209,4 +234,5 @@ Complete the lock_pairs function.
 Complete the print_winner function.
     The function should print out the name of the candidate who is the source of the graph.
     You may assume there will not be more than one source.
+
 */
