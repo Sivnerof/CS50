@@ -2,6 +2,21 @@
 #include <string.h>
 #include <stdio.h>
 
+/*
+    A program that simulates a Tideman runoff voting system
+
+                         A  B  C  D  E  F
+                        [0][1][2][3][4][5]
+
+                A  [0]  [0][?][?][?][?][?] I
+                B  [1]  [?][0][?][?][?][?] |
+                C  [2]  [?][?][0][?][?][?] |
+                D  [3]  [?][?][?][0][?][?] |
+                E  [4]  [?][?][?][?][0][?] |
+                F  [5]  [?][?][?][?][?][0] v
+                         J ------------->
+*/
+
 // Max number of candidates
 #define MAX 9
 
@@ -117,21 +132,13 @@ bool vote(int rank, string name, int ranks[])
 // Update preferences given one voter's ranks
 void record_preferences(int ranks[])
 {
-/*             A  B  C  D  E  F          i = |   j = ----->
-              [0][1][2][3][4][5]             |
-        A  [0][0][?][?][?][?][?]             v
-        B  [1][?][0][?][?][?][?]
-        C  [2][?][?][0][?][?][?]
-        D  [3][?][?][?][0][?][?]
-        E  [4][?][?][?][?][0][?]
-        F  [5][?][?][?][?][?][0]
-*/
-
     // Loop through voter array
     for (int i = 0; i < candidate_count; i++)
     {
+        // Side by side comparison with next number up
         for (int j = i + 1; j < candidate_count; j++)
         {
+            // Increment position at following coordinates
             preferences[ranks[i]][ranks[j]]++;
         }
     }
@@ -141,7 +148,29 @@ void record_preferences(int ranks[])
 // Record pairs of candidates where one is preferred over the other
 void add_pairs(void)
 {
-    // TODO
+    // variable for incrementing position of pairs array
+    int position = 0;
+
+    // traversal of 2-D array of preferences
+    for (int i = 0; i < candidate_count; i++)
+    {
+        // inner loop compares opposite side of adjacency matrix
+        for (int j = 0; j < candidate_count; j++)
+        {
+            // here we catch the losing side
+            if (preferences[i][j] > preferences[j][i])
+            {
+                // update pairs of winners/losers
+                pairs[position].winner = i;
+                pairs[position].loser = j;
+
+                //Move position over one & increment pair count
+                pair_count++;
+                position++;
+            }
+
+        }
+    }
     return;
 }
 
@@ -168,12 +197,6 @@ void print_winner(void)
 
 /*
 
-Complete the add_pairs function.
-    The function should add all pairs of candidates where one candidate is preferred to the pairs array.
-    A pair of candidates who are tied (one is not preferred over the other) should not be added to the array.
-    The function should update the global variable pair_count to be the number of pairs of candidates.
-    (The pairs should thus all be stored between pairs[0] and pairs[pair_count - 1], inclusive).
-
 Complete the sort_pairs function.
     The function should sort the pairs array in decreasing order of strength of victory,
     where strength of victory is defined to be the number of voters who prefer the preferred candidate.
@@ -186,5 +209,4 @@ Complete the lock_pairs function.
 Complete the print_winner function.
     The function should print out the name of the candidate who is the source of the graph.
     You may assume there will not be more than one source.
-
 */
