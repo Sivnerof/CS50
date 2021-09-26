@@ -43,6 +43,7 @@ int candidate_count;
 
 // Function prototypes
 bool vote(int rank, string name, int ranks[]);
+bool pairComparisonCycle(int start, int end);
 void record_preferences(int ranks[]);
 void add_pairs(void);
 void sort_pairs(void);
@@ -214,8 +215,47 @@ void sort_pairs(void)
 // Lock pairs into the candidate graph in order, without creating cycles
 void lock_pairs(void)
 {
-    // TODO
-    return;
+    /*
+    This article helps understand recursive function for lock_pairs problem
+    https://gist.github.com/nicknapoli82/6c5a1706489e70342e9a0a635ae738c9
+    */
+
+    // Loop through pairs and send to helper function
+    for (int i = 0; i < pair_count; i++)
+    {
+        // Filter pairs that would cause a loop around all candidates
+        if (!pairComparisonCycle(pairs[i].winner, pairs[i].loser))
+        {
+            // Original route origin here
+            locked[pairs[i].winner][pairs[i].loser] = true;
+        }
+    }
+}
+
+bool pairComparisonCycle(int start, int end)
+{
+    // If true the origin was looped back to
+    if (end == start)
+    {
+        return true;
+    }
+
+    // Go through pairs
+    for (int i = 0; i < pair_count; i++)
+    {
+        // Check if loser wins against candidate in this iteration
+        if (locked[end][i])
+        {
+            // Check if that person loops back to original point
+            if (pairComparisonCycle(start, i))
+            {
+                return true;
+            }
+        }
+    }
+
+    // No cycle if here
+    return false;
 }
 
 // Print the winner of the election
@@ -226,10 +266,6 @@ void print_winner(void)
 }
 
 /*
-
-Complete the lock_pairs function.
-    The function should create the locked graph,
-    adding all edges in decreasing order of victory strength so long as the edge would not create a cycle.
 
 Complete the print_winner function.
     The function should print out the name of the candidate who is the source of the graph.
