@@ -121,7 +121,7 @@ bool vote(int rank, string name, int ranks[])
         // Catch candidates position in array
         if (strcmp(candidates[i], name) == 0)
         {
-            // array ranks position equal to incoming rank equals candidate location
+            // array ranks position is equal to incoming rank, value inserted is candidate location
             ranks[rank] = i;
             return true;
         }
@@ -261,14 +261,19 @@ bool pairComparisonCycle(int start, int end)
 // Print the winner of the election
 void print_winner(void)
 {
-    // TODO
+    // Loop through 2-D pair count
+    for (int i = 0; i < pair_count; i++)
+    {
+        for (int j = 0; j < pair_count; j++)
+        {
+            // Check if a user has a true value against an opponent in row
+            // While their column is all false
+            if (locked[i][j] == true && locked[j][i] == false)
+            {
+                // Winner
+                printf("%s\n", candidates[i]);
+            }
+        }
+    }
     return;
 }
-
-/*
-
-Complete the print_winner function.
-    The function should print out the name of the candidate who is the source of the graph.
-    You may assume there will not be more than one source.
-
-*/
