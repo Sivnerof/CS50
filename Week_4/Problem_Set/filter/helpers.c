@@ -49,14 +49,15 @@ void sepia(int height, int width, RGBTRIPLE image[height][width])
 // Reflect image horizontally
 void reflect(int height, int width, RGBTRIPLE image[height][width])
 {
-    int swapRed, swapGreen, swapBlue, position, center;
+    int swapRed, swapGreen, swapBlue, center;
+    int position;
     for (int i = 0; i < height; i++)
     {
-        position = width - 1;
         if (width % 2 == 0)
         {
+            position = width - 1;
             center = width / 2;
-            for (int j = 0; j <= center; j++)
+            for (int j = 0; j < center; j++)
             {
                 swapRed = image[i][position].rgbtRed;
                 swapGreen = image[i][position].rgbtGreen;
@@ -73,8 +74,9 @@ void reflect(int height, int width, RGBTRIPLE image[height][width])
 
         else
         {
+            position = width - 1;
             center = ceil(width / 2);
-            for (int j = 0; j < center; j++)
+            for (int j = 0; j <= center; j++)
             {
                 swapRed = image[i][position].rgbtRed;
                 swapGreen = image[i][position].rgbtGreen;
@@ -91,31 +93,6 @@ void reflect(int height, int width, RGBTRIPLE image[height][width])
     }
     return;
 }
-    /*
-                         A  B  C    D  E  F
-                        [0][1][2]  [3][4][5]
-
-                A  [0]  [?][?][?]  [?][?][?]
-                B  [1]  [?][?][?]  [?][?][?]
-                C  [2]  [?][?][?]  [?][?][?]
-                D  [3]  [?][?][?]  [?][?][?]
-                E  [4]  [?][?][?]  [?][?][?]
-                F  [5]  [?][?][?]  [?][?][?]
-
-                         A  B  C    D    E  F  G
-                        [0][1][2]  [3]  [4][5][6]
-
-                A  [0]  [?][?][?]  [?]  [?][?][?]
-                B  [1]  [?][?][?]  [?]  [?][?][?]
-                C  [2]  [?][?][?]  [?]  [?][?][?]
-                D  [3]  [?][?][?]  [?]  [?][?][?]
-                E  [4]  [?][?][?]  [?]  [?][?][?]
-                F  [5]  [?][?][?]  [?]  [?][?][?]
-*/
-    //Reflection
-    //Note that all of the original pixels of the original image will still be present in the reflected image,
-    //it’s just that those pixels may have rearranged to be in a different place in the image.
-    //width - 1?
 
 // Blur image
 void blur(int height, int width, RGBTRIPLE image[height][width])
