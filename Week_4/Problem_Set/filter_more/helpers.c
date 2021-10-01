@@ -154,6 +154,82 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
 void edges(int height, int width, RGBTRIPLE image[height][width])
 {
     RGBTRIPLE sobelImage[height][width];
+    RGBTRIPLE blurredImage[height][width];
+
+/*
+    // Uncomment code to run improved version of edges function
+    // Which first runs grayscale on image
+    // Followed by blur filter
+    // Finally edge detection
+
+    // Grayscale application
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            int grayScale = round((image[i][j].rgbtBlue + image[i][j].rgbtGreen + image[i][j].rgbtRed) / 3.0);
+            image[i][j].rgbtBlue = grayScale;
+            image[i][j].rgbtRed = grayScale;
+            image[i][j].rgbtGreen = grayScale;
+        }
+    }
+
+
+    // Loop through pixels
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            float sumRed, sumGreen, sumBlue;
+            int count;
+            count = 0;
+            sumRed = sumGreen = sumBlue = 0;
+
+            // Loop through surrounding pixels on x
+            for (int x = -1; x < 2; x++)
+            {
+                // Loop through surrounding pixels on y
+                for (int y = -1; y < 2; y++)
+                {
+                    // Set positions
+                    int xPosition = i + x;
+                    int yPosition = j + y;
+
+                    // Exclude and move to next position
+                    if (xPosition < 0 || xPosition > (height - 1) || yPosition < 0 || yPosition > (width - 1))
+                    {
+                        continue;
+                    }
+
+                    // Add up sums of individual RGB values
+                    sumRed += image[xPosition][yPosition].rgbtRed;
+                    sumGreen += image[xPosition][yPosition].rgbtGreen;
+                    sumBlue += image[xPosition][yPosition].rgbtBlue;
+
+                    // Track of times needed to divide by
+                    count++;
+                }
+
+                // Drop values into dummy struct pixel location
+                blurredImage[i][j].rgbtRed = round(sumRed / count);
+                blurredImage[i][j].rgbtGreen = round(sumGreen / count);
+                blurredImage[i][j].rgbtBlue = round(sumBlue / count);
+            }
+        }
+    }
+
+    // Blurred pixels looped into originals positions
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            image[i][j].rgbtRed = blurredImage[i][j].rgbtRed;
+            image[i][j].rgbtGreen = blurredImage[i][j].rgbtGreen;
+            image[i][j].rgbtBlue = blurredImage[i][j].rgbtBlue;
+        }
+    }
+
+    */
 
     // 3x3 Sobel Grids
 
