@@ -4,9 +4,6 @@
 
 #define BLOCK_SIZE 512
 
-uint8_t byte[BLOCK_SIZE];
-
-char fileName[4];
 int main(int argc, char *argv[])
 {
     // Handles attempts at inputing multiple files
@@ -25,21 +22,44 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // Initialize file pointer and set to null
     FILE *outputImage = NULL;
 
+    // 3 bytes for 3 numbers in char array
+    char fileName[3];
+
+    // Keep lookout for how many times a header is found
     int count = 0;
+
+    // Initialize array of 8bits total size 512
+    uint8_t byte[BLOCK_SIZE];
+
+    // Read until end of file
     while (fread(byte, sizeof(uint8_t), BLOCK_SIZE, forensicImage))
     {
+
+        // Catch headers
         if (byte[0] == 0xff && byte[1] == 0xd8 && byte[2] == 0xff && (byte[3] & 0xf0) == 0xe0)
         {
-                sprintf(fileName, "%03i.jpg", count);
-                outputImage = fopen(fileName, "w");
-                count++;
 
+            // If start of new jpeg close file
             if (outputImage != NULL)
             {
-                fwrite(byte, sizeof(uint8_t), BLOCK_SIZE, outputImage);
+                fclose(outputImage);
             }
+
+            // Print count loop iteration to file name
+            sprintf(fileName, "%03i.jpg", count);
+
+            // Open new image file and increment JPG count
+            outputImage = fopen(fileName, "w");
+            count++;
+        }
+
+        // Create JPG
+        if (outputImage != NULL)
+        {
+            fwrite(byte, sizeof(uint8_t), BLOCK_SIZE, outputImage);
         }
     }
 
@@ -47,5 +67,4 @@ int main(int argc, char *argv[])
 fclose(forensicImage);
 fclose(outputImage);
 return 0;
-
 }
