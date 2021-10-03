@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
         }
     }
 
-// Close open files
-fclose(forensicImage);
-fclose(outputImage);
-return 0;
+    // Close open files
+    fclose(forensicImage);
+    fclose(outputImage);
+    return 0;
 }
