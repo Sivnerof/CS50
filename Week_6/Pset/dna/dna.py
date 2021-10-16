@@ -1,6 +1,76 @@
 """
-    Open CSV file and DNA sequence, read contents into memory.
+    Implement a program that matches a DNA sequence to the individual in the CSV files.
+"""
 
+from cs50 import get_string
+import sys, csv
+
+
+def main():
+
+    # Ensure correct usage
+    if len(sys.argv) != 3:
+        sys.exit("Usage: /python dna.py [CSV FILE] [TEXT FILE]")
+
+    # Read dna strand into memory
+    dna_strand = read_dna(sys.argv[2])
+
+    # Read dna samples of subjects into memory
+    dna_samples = read_samples(sys.argv[1])
+    print(dna_samples[0]['name'])
+
+    # Get Short Tandem Repeats
+    STR = get_str(dna_samples)
+    print(STR)
+
+
+    repeats = look_for_repeats(dna_strand, STR)
+
+    return
+
+# open dna text file and store contents
+def read_dna(n):
+
+    with open(n, 'r') as f:
+        for line in f:
+            dna = line
+
+    return dna
+
+
+def read_samples(n):
+    dict_list = []
+    with open(n, 'r') as f:
+        reader = csv.DictReader(f)
+        for line in reader:
+            dict_list.append(line)
+    return dict_list
+
+
+def get_str(n):
+    str_strip = list(n[0].keys())
+    str_strip = str_strip[1:]
+    return str_strip
+
+
+def look_for_repeats(dna, strs):
+
+    testlist = []
+    test = dna.count(strs[0])
+    print(test)
+
+    counter = 0
+    for i in strs:
+        testlist.append(dna.count(strs[counter]))
+        counter += 1
+    print (testlist)
+
+    return testlist
+
+
+main()
+
+"""
     For each STR compute longest run of consecutive repeats in the DNA sequence.
 
     Compare STR counts against each row in CSV file.
@@ -19,20 +89,6 @@
     given both a DNA sequence and an STR as inputs, returns the maximum number of times that the STR repeats.
     You can then use that function in other parts of your program!
 
-The program should require as its first command-line argument,
-the name of a CSV file containing the STR counts for a list of individuals and
-should require as its second command-line argument the name of a text file containing the DNA sequence to identify.
-
-    If your program is executed with the incorrect number of command-line arguments,
-    your program should print an error message of your choice (with print).
-    If the correct number of arguments are provided,
-    you may assume that the first argument is indeed the filename of a valid CSV file,
-    and that the second argument is the filename of a valid text file.
-
-Your program should open the CSV file and read its contents into memory.
-
-    You may assume that the first row of the CSV file will be the column names.
-    The first column will be the word name and the remaining columns will be the STR sequences themselves.
 
 Your program should open the DNA sequence and read its contents into memory.
 For each of the STRs (from the first line of the CSV file),
@@ -102,4 +158,5 @@ they can localize their search to just a narrow section of DNA. But we’ll igno
 Write a program that:
 will take a sequence of DNA and a CSV file containing STR counts for
 a list of individuals and then output to whom the DNA (most likely) belongs.
+
 """
