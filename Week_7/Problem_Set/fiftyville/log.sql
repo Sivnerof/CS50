@@ -1,9 +1,11 @@
 -- Keep a log of any SQL queries you execute as you solve the mystery.
 
--- Keep a log of any SQL queries you execute as you solve the mystery.
-
 -- All we know is that the theft took place on July 28, 2020 and that it took place on Chamberlin Street
-    SELECT description FROM crime_scene_reports WHERE month = 7 AND day = 28 AND street = "Chamberlin Street";
+    SELECT description 
+    FROM crime_scene_reports 
+    WHERE month = 7 
+    AND day = 28 
+    AND street = "Chamberlin Street";
 
         -- description
         -- Theft of the CS50 duck took place at 10:15am at the Chamberlin Street courthouse.
@@ -11,7 +13,11 @@
         -- each of their interview transcripts mentions the courthouse.
 
 -- Given above information I'm going to next query the interviews table.
-    SELECT name, transcript FROM interviews WHERE month = 7 AND day = 28 AND transcript like "%courthouse%"
+    SELECT name, transcript 
+    FROM interviews 
+    WHERE month = 7 
+    AND day = 28 
+    AND transcript like "%courthouse%"
 
         -- name | transcript
         -- Ruth | Sometime within ten minutes of the theft, I saw the thief get into a car in the courthouse parking lot and drive away.
@@ -29,7 +35,13 @@
         -- Witness Raymond brought up phone calls, flights and the purchasing tickets, query phone calls, flights?
 
 -- Query courthouse security logs.
-    SELECT license_plate, activity FROM courthouse_security_logs WHERE month = 7 AND day = 28 AND hour = 10 AND minute >= 15 AND minute <= 25;
+    SELECT license_plate, activity 
+    FROM courthouse_security_logs 
+    WHERE month = 7 
+    AND day = 28 
+    AND hour = 10 
+    AND minute >= 15 
+    AND minute <= 25;
 
         -- license_plate | activity
         -- 5P2BI95 | exit
@@ -42,7 +54,11 @@
         -- 0NTHK55 | exit
 
 -- Query atm transactions
-    SELECT transaction_type, account_number, amount FROM atm_transactions WHERE month = 7 AND day = 28 AND atm_location = "courthouse";
+    SELECT transaction_type, account_number, amount 
+    FROM atm_transactions 
+    WHERE month = 7 
+    AND day = 28 
+    AND atm_location = "Fifer Street";
 
         -- transaction_type | account_number | amount
         -- withdraw | 28500762 | 48
@@ -56,7 +72,12 @@
         -- withdraw | 26013199 | 35
 
 -- Query phone calls
-    SELECT caller, receiver FROM phone_calls WHERE year = 2020 AND month = 7 AND day = 28 AND duration < 60;
+    SELECT caller, receiver 
+    FROM phone_calls 
+    WHERE year = 2020 
+    AND month = 7 
+    AND day = 28 
+    AND duration < 60;
 
         -- caller | receiver
         -- (130) 555-0289 | (996) 555-8899
@@ -70,7 +91,18 @@
         -- (338) 555-6650 | (704) 555-2131
 
 -- Find out who owns those license plates
-    SELECT name, phone_number, passport_number, license_plate FROM people WHERE license_plate IN (SELECT license_plate FROM courthouse_security_logs WHERE month = 7 AND day = 28 AND hour = 10 AND minute >= 15 AND minute <= 25);
+    SELECT name, phone_number, passport_number, license_plate 
+    FROM people 
+    WHERE license_plate 
+    IN (
+        SELECT license_plate 
+        FROM courthouse_security_logs 
+        WHERE month = 7 
+        AND day = 28 
+        AND hour = 10 
+        AND minute >= 15 
+        AND minute <= 25
+    );
 
         -- name | phone_number | passport_number | license_plate
         -- Patrick | (725) 555-4692 | 2963008352 | 5P2BI95
@@ -83,20 +115,148 @@
         -- Ernest | (367) 555-5533 | 5773159633 | 94KL13X
 
 
--- Find out who owns those phone numbers
-
-
 -- Find out who owns those bank accounts
+    SELECT people.name 
+    FROM people 
+    JOIN bank_accounts 
+    ON people.id = person_id 
+    WHERE bank_accounts.account_number 
+    IN (
+        SELECT atm_transactions.account_number 
+        FROM atm_transactions 
+        WHERE month = 7 
+        AND day = 28 
+        AND atm_location = "Fifer Street"
+    );
+
+        -- name
+        -- Ernest
+        -- Robert
+        -- Russell
+        -- Roy
+        -- Bobby
+        -- Elizabeth
+        -- Danielle
+        -- Madison
+        -- Victoria
+
+-- Find out who left courthouse and called someone and withdrew money from ATM
+    SELECT people.name 
+    FROM people 
+    JOIN bank_accounts 
+    ON people.id = person_id 
+    WHERE bank_accounts.account_number 
+    IN (
+        SELECT atm_transactions.account_number 
+        FROM atm_transactions 
+        WHERE month = 7 
+        AND day = 28 
+        AND atm_location = "Fifer Street"
+    ) 
+    AND people.license_plate 
+    IN (
+        SELECT license_plate 
+        FROM courthouse_security_logs 
+        WHERE month = 7 
+        AND day = 28 
+        AND hour = 10 
+        AND minute >= 15 
+        AND minute <= 25
+    ) 
+    AND people.phone_number 
+    IN (
+        SELECT caller 
+        FROM phone_calls 
+        WHERE year = 2020 
+        AND month = 7 
+        AND day = 28 
+        AND duration < 60
+    );
+       
+        -- name
+        -- Ernest
+        -- Russell
+
+-- Find out who Ernest and Russel called
+    SELECT people.name 
+    FROM people 
+    WHERE people.phone_number 
+    IN (
+        SELECT phone_calls.receiver 
+        FROM phone_calls 
+        WHERE year = 2020 
+        AND month = 7 
+        AND day = 28 
+        AND duration < 60 
+        AND phone_calls.caller 
+        IN (
+            SELECT people.phone_number 
+            FROM people 
+            WHERE name = "Ernest" 
+            OR "Russel"
+        )
+    );
+
+        -- name
+        -- Berthold
+
+-- Ernest called Berthold, get both Ernest and Bertholds information
+    SELECT * 
+    FROM people 
+    WHERE people.name 
+    IN ("Berthold", "Ernest");
+
+        -- id | name | phone_number | passport_number | license_plate
+        -- 686048 | Ernest | (367) 555-5533 | 5773159633 | 94KL13X
+        -- 864400 | Berthold | (375) 555-8161 |  | 4V16VO0
+
+    SELECT bank_accounts.creation_year, bank_accounts.account_number 
+    FROM bank_accounts 
+    WHERE bank_accounts.person_id 
+    IN (
+        SELECT people.id 
+        FROM people 
+        WHERE people.name 
+        IN ("Berthold", "Ernest")
+    );
+
+        -- creation_year | account_number
+        -- 2010 | 49610011 / Ernest
+        -- 2019 | 94751264 / Berthold
 
 
+-- Find out what flight Ernest is on
+    SELECT * 
+    FROM passengers 
+    WHERE passengers.passport_number 
+    IN (
+        SELECT people.passport_number 
+        FROM people 
+        WHERE people.name = "Ernest"
+    );
 
+        -- flight_id | passport_number | seat
+        -- 36 | 5773159633 | 4A
 
+-- Figure out destination
+    SELECT city 
+    FROM airports 
+    WHERE id 
+    IN (
+        SELECT flights.destination_airport_id 
+        FROM flights 
+        WHERE flights.id 
+        IN (
+            SELECT passengers.flight_id 
+            FROM passengers 
+            WHERE passport_number 
+            IN (
+                SELECT people.passport_number 
+                FROM people 
+                WHERE people.name = "Ernest"
+            )
+        )
+    );
 
-
-
-
-    -- executing .tables will list all of the tables in the database.
-    -- executing .schema TABLE_NAME
-
-
-
+        -- full_name | abbreviation
+        -- Heathrow Airport | LHR
