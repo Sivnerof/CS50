@@ -48,7 +48,8 @@ def index():
     """Show portfolio of stocks"""
 
     # Query user purchases/balance
-    stocks = db.execute("SELECT symbol, name, price, SUM(shares) AS sum_total FROM transactions WHERE user_id = ? GROUP BY symbol", session["user_id"])
+    stocks = db.execute(
+        "SELECT symbol, name, price, SUM(shares) AS sum_total FROM transactions WHERE user_id = ? GROUP BY symbol", session["user_id"])
     funds = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])[0]["cash"]
 
     balance = funds
@@ -58,7 +59,6 @@ def index():
 
     # Pass purchases/balance to index
     return render_template("index.html", stocks=stocks, funds=funds, balance=balance, usd=usd)
-
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -81,10 +81,8 @@ def buy():
             return apology("Shares can not be empty")
 
         # Make sure shares are positive integers
-        elif int(request.form.get("shares")) < 1:
+        elif not request.form.get("shares").isdigit():
             return apology("Minimum must be one share")
-
-
 
         # Query cash amount
         balance = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])[0]["cash"]
@@ -101,7 +99,8 @@ def buy():
         # Complete transaction
         else:
             db.execute("UPDATE users SET cash = ? WHERE id = ?", balance - total_cost, session["user_id"])
-            db.execute("INSERT INTO transactions (user_id, name, shares, price, type, symbol) VALUES (?, ?, ?, ?, ?, ?)", session["user_id"], stock_name, request.form.get("shares"), stock_price, 'buy', request.form.get("symbol").upper())
+            db.execute("INSERT INTO transactions (user_id, name, shares, price, type, symbol) VALUES (?, ?, ?, ?, ?, ?)",
+                       session["user_id"], stock_name, request.form.get("shares"), stock_price, 'buy', request.form.get("symbol").upper())
 
         return redirect("/")
 
@@ -109,12 +108,17 @@ def buy():
         return render_template("buy.html")
 
 
-
 @app.route("/history")
 @login_required
 def history():
     """Show history of transactions"""
-    return apology("TODO")
+
+    # Query transactions
+    transactions = db.execute(
+        "SELECT type, symbol, price, shares, time, name FROM transactions WHERE user_id = ?", session["user_id"])
+
+    # Show transaction history
+    return render_template("history.html", usd=usd, transactions=transactions)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -189,8 +193,6 @@ def quote():
         return render_template("quote.html")
 
 
-
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
@@ -220,7 +222,8 @@ def register():
             return apology("passwords do not match", 400)
 
         # Create User in SQL database and reroute to login
-        db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", request.form.get("username"), generate_password_hash(request.form.get("password")))
+        db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", request.form.get(
+            "username"), generate_password_hash(request.form.get("password")))
         return redirect("/")
 
     # Keep user on registration form
@@ -228,12 +231,42 @@ def register():
         return render_template("register.html")
 
 
-
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
     """Sell shares of stock"""
-    return apology("TODO")
+
+    # Check for negative or invalid shares
+    if request.method == "POST":
+
+        if int(request.form.get("shares")) < 1:
+            return apology("Enter valid amount")
+
+        # Save stock information
+        symbol = request.form.get("symbol")
+        shares = int(request.form.get("shares"))
+        stock_price = lookup(symbol)["price"]
+        stock_name = lookup(symbol)["name"]
+        stock_sale = stock_price * shares
+        sellable_shares = db.execute(
+            "SELECT shares FROM transactions WHERE user_id = ? AND symbol = ? GROUP BY symbol", session["user_id"], symbol)[0]["shares"]
+        cash_balance = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])[0]["cash"]
+
+        # Ensure user has enough shares available to sell
+        if sellable_shares < shares:
+            return apology("Not enough shares")
+
+        # Execute transaction
+        db.execute("UPDATE users SET cash = ? WHERE id = ?", cash_balance + stock_sale, session["user_id"])
+        db.execute("INSERT into transactions (user_id, name, shares, price, type, symbol) VALUES (?, ?, ?, ?, ?, ?)",
+                   session["user_id"], stock_name, -shares, stock_price, "sell", symbol.upper())
+
+        # Success
+        return redirect("/")
+
+    else:
+        symbols = db.execute("SELECT symbol FROM transactions WHERE user_id = ? GROUP BY symbol", session["user_id"])
+        return render_template("sell.html", symbols=symbols)
 
 
 def errorhandler(e):
