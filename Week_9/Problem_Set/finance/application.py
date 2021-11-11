@@ -46,14 +46,68 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return apology("TODO")
+
+    # Query user purchases/balance
+    stocks = db.execute("SELECT symbol, name, price, SUM(shares) AS sum_total FROM transactions WHERE user_id = ? GROUP BY symbol", session["user_id"])
+    funds = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])[0]["cash"]
+
+    balance = funds
+
+    for stock in stocks:
+        balance += stock["price"] * stock["sum_total"]
+
+    # Pass purchases/balance to index
+    return render_template("index.html", stocks=stocks, funds=funds, balance=balance, usd=usd)
+
 
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+
+    if request.method == "POST":
+
+        # Ensure symbol field is not blank
+        if not request.form.get("symbol"):
+            return apology("Symbol can not be blank")
+
+        # Ensure symbol is valid
+        elif not lookup(request.form.get("symbol")):
+            return apology("Invalid symbol")
+
+        # Ensure shares are not blank
+        elif not request.form.get("shares"):
+            return apology("Shares can not be empty")
+
+        # Make sure shares are positive integers
+        elif int(request.form.get("shares")) < 1:
+            return apology("Minimum must be one share")
+
+
+
+        # Query cash amount
+        balance = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])[0]["cash"]
+
+        # Save stock information
+        stock_name = lookup(request.form.get("symbol"))["name"]
+        stock_price = lookup(request.form.get("symbol"))["price"]
+        total_cost = stock_price * int(request.form.get("shares"))
+
+        # Check for available funds
+        if balance < total_cost:
+            return apology("Insufficient funds")
+
+        # Complete transaction
+        else:
+            db.execute("UPDATE users SET cash = ? WHERE id = ?", balance - total_cost, session["user_id"])
+            db.execute("INSERT INTO transactions (user_id, name, shares, price, type, symbol) VALUES (?, ?, ?, ?, ?, ?)", session["user_id"], stock_name, request.form.get("shares"), stock_price, 'buy', request.form.get("symbol").upper())
+
+        return redirect("/")
+
+    else:
+        return render_template("buy.html")
+
 
 
 @app.route("/history")
@@ -129,7 +183,7 @@ def quote():
         ticker = lookup(request.form.get("symbol"))
 
         # Pass symbol to quoted template
-        return render_template("quoted.html", ticker=ticker)
+        return render_template("quoted.html", ticker=ticker, usd=usd)
 
     else:
         return render_template("quote.html")

@@ -7,5 +7,5 @@
 {% block main %}
     <p>{{ ticker.symbol }}</p>
     <p>{{ ticker.name }}</p>
-    <p>${{ ticker.price }} USD</p>
+    <p>{{ ticker.price | usd }}</p>
 {% endblock %}
