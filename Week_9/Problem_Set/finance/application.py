@@ -114,13 +114,65 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    return apology("TODO")
+
+    if request.method == "POST":
+
+        # Ensure sybmol field is not empty
+        if not request.form.get("symbol"):
+            return apology("Symbol can not be blank")
+
+        # Ensure symbol is valid
+        elif not lookup(request.form.get("symbol")):
+            return apology("Invalid symbol")
+
+        # Save symbol
+        ticker = lookup(request.form.get("symbol"))
+
+        # Pass symbol to quoted template
+        return render_template("quoted.html", ticker=ticker)
+
+    else:
+        return render_template("quote.html")
+
+
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
-    return apology("TODO")
+
+    if request.method == "POST":
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return apology("username can not be blank", 400)
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("password can not be blank", 400)
+
+        # Ensure password confirmation field not blank
+        elif not request.form.get("confirmation"):
+            return apology("password confirmation can not be blank", 400)
+
+        # Check for username already existing
+        user_names = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
+
+        # Ensure username exists and password is correct
+        if len(user_names) != 0:
+            return apology("username already exists", 400)
+
+        # Make sure passwords match
+        elif request.form.get("password") != request.form.get("confirmation"):
+            return apology("passwords do not match", 400)
+
+        # Create User in SQL database and reroute to login
+        db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", request.form.get("username"), generate_password_hash(request.form.get("password")))
+        return redirect("/")
+
+    # Keep user on registration form
+    else:
+        return render_template("register.html")
+
 
 
 @app.route("/sell", methods=["GET", "POST"])
