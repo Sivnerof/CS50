@@ -36,6 +36,10 @@ def main():
         # Decrypt
         result_text = decrypt_text(user_text, cipher_key)
 
+    # Print results for user to a .txt file
+    with open("result.txt",'w',encoding = 'utf-8') as f:
+        f.write(result_text)
+
     sys.exit(0)
 
 
@@ -54,14 +58,17 @@ def ascii_values(reg_string):
 
 
 def encrypt_text(text_values, key_values):
-    convert_string = ""
+    encrypted_string = ""
     for number in range(len(text_values)):
-        convert_string += chr(((text_values[number] + key_values[number]) % 26) + ord("a"))
-    return convert_string
+        encrypted_string += chr(((text_values[number] + key_values[number]) % 26) + ord("a"))
+    return encrypted_string
 
 
-def decrypt_text(text, key):
-    pass
+def decrypt_text(text_values, key_values):
+    decrypted_string = ""
+    for number in range(len(text_values)):
+        decrypted_string += chr(((text_values[number] - key_values[number]) % 26) + ord("a"))
+    return decrypted_string
 
 
 if __name__ == "__main__":
