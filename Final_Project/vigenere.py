@@ -18,6 +18,9 @@ def main():
 
     # Get  plain or ciphertext from user
     user_text = input("Enter text: ").lower().replace(" ", "")
+    if user_text.isalpha() == False and mode == 'e':
+        print("Text must be alphabetical characters only")
+        sys.exit(1)
 
     # Create cipherkey of same length as user text
     cipher_key = adjusted_length(cipher_key, len(user_text))
