@@ -3,26 +3,38 @@ import sys
 
 def main():
 
-    # Get key from user 
+    # Get user intentions
+    print("To encrpyt a message type e, to decrypt type d")
+    mode = input("Mode: ").lower()
+    if mode != 'e' and mode != 'd':
+        print("Enter valid mode")
+        sys.exit(1)
+
+    # Get key from user
     cipher_key = input("Enter encryption key: ").lower().replace(" ", "")
     if cipher_key.isalpha() == False:
         print("Key must be alphabetical characters only")
         sys.exit(1)
 
-    # Get  plaintext from user
-    plain_text = input("Enter plaintext: ").lower().replace(" ", "")
+    # Get  plain or ciphertext from user
+    user_text = input("Enter text: ").lower().replace(" ", "")
 
-    # Create cipherkey of same length as plaintext
-    cipher_key = adjusted_length(cipher_key, len(plain_text))
+    # Create cipherkey of same length as user text
+    cipher_key = adjusted_length(cipher_key, len(user_text))
 
-    # Get ASCII values of plaintext
-    plain_text = ascii_values(plain_text)
+    # Get ASCII values of usertext
+    user_text = ascii_values(user_text)
 
     # Get ASCII values of encryption key
     cipher_key = ascii_values(cipher_key)
 
+    if mode == 'e':
+        # Encrypt
+        result_text = encrypt_text(user_text, cipher_key)
 
-    print(plain_text, cipher_key)
+    elif mode == 'd':
+        # Decrypt
+        result_text = decrypt_text(user_text, cipher_key)
 
     sys.exit(0)
 
@@ -35,10 +47,21 @@ def adjusted_length(key, text_length):
 
 
 def ascii_values(reg_string):
-    converted_string = ""
+    converted_values = []
     for letters in reg_string:
-        converted_string += str((ord(letters) - ord("a")))
-    return converted_string
+        converted_values.append(ord(letters) - ord("a"))
+    return converted_values
+
+
+def encrypt_text(text_values, key_values):
+    convert_string = ""
+    for number in range(len(text_values)):
+        convert_string += chr(((text_values[number] + key_values[number]) % 26) + ord("a"))
+    return convert_string
+
+
+def decrypt_text(text, key):
+    pass
 
 
 if __name__ == "__main__":
