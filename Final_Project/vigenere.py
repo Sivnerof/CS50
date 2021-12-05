@@ -4,7 +4,7 @@ import sys
 def main():
 
     # Get user intentions
-    print("To encrpyt a message type e, to decrypt type d")
+    print("To encrypt a message type e, to decrypt type d")
     mode = input("Mode: ").lower()
     if mode != 'e' and mode != 'd':
         print("Enter valid mode")
