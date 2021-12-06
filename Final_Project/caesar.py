@@ -18,10 +18,7 @@ def main():
         sys.exit(1)
     
     # Get  plain or ciphertext from user
-    user_text = input("Enter text: ").lower().replace(" ", "")
-    if user_text.isalpha() == False and mode == 'e':
-        print("Text must be alphabetical characters only")
-        sys.exit(1)
+    user_text = input("Enter text: ").lower()
     
     # Get ascii values of user provided text
     user_text = ascii_values(user_text)
@@ -44,21 +41,30 @@ def main():
 def ascii_values(text):
     ascii_list = []
     for letters in range(len(text)):
-        ascii_list.append(ord(text[letters]))
+        if text[letters].isalpha():    
+            ascii_list.append(ord(text[letters]))
+        else:
+            ascii_list.append(text[letters])
     return ascii_list
 
 
 def encrypt_text(text, key):
     encrypted_string = ""
     for i in range(len(text)):
-        encrypted_string += chr((((text[i] + key) - ord('a')) % 26) + ord('a')) 
+        if type(text[i]) == int:
+            encrypted_string += chr((((text[i] + key) - ord('a')) % 26) + ord('a')) 
+        else:
+            encrypted_string += str(text[i])
     return encrypted_string
 
 
 def decrypt_text(text, key):
     decrypted_string = ""
     for i in range(len(text)):
-        decrypted_string += chr((((text[i] - key) - ord('a')) % 26) + ord('a'))
+        if type(text[i]) == int:
+            decrypted_string += chr((((text[i] - key) - ord('a')) % 26) + ord('a'))
+        else:
+            decrypted_string += str(text[i])
     return decrypted_string
 
 
