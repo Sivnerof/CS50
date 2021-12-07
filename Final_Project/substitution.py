@@ -29,6 +29,10 @@ def main():
     if mode == 'd':
         result_text = decrypted_text(user_text, cipher_key, alpha_index)
     
+    # Print results for user to a .txt file
+    with open("result.txt",'w',encoding = 'utf-8') as f:
+        f.write(result_text)
+    
     sys.exit(0)
 
 
@@ -57,16 +61,16 @@ def encrypted_text(text, key, alpha):
             encrypted_string += text[i]
     return encrypted_string
 
-"""
+
 def decrypted_text(text, key, alpha):
     decrypted_string = ""
     for i in range(len(text)):
         if text[i].isalpha() == True:
-            decrypted_string += key[alpha.index(text[i])]
+            decrypted_string += alpha[key.index(text[i])]
         else:
             decrypted_string += text[i]
     return decrypted_string
-"""
+
 
 if __name__ == "__main__":
     main()
