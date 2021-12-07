@@ -16,11 +16,18 @@ def main():
         sys.exit(1)
 
     # Grab users plain or cipher text
-    user_text = input("Enter text: ").lower()
+    user_text = input("Enter text: ").upper()
 
+    # Index to compare
+    alpha_index = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     # Encrypt
+    if mode == 'e':
+        result_text = encrypted_text(user_text, cipher_key, alpha_index)
+
     # Decrypt
+    if mode == 'd':
+        result_text = decrypted_text(user_text, cipher_key, alpha_index)
     
     sys.exit(0)
 
@@ -39,6 +46,27 @@ def valid_cipherkey(key):
             return False
 
     return True
+
+
+def encrypted_text(text, key, alpha):
+    encrypted_string = ""
+    for i in range(len(text)):
+        if text[i].isalpha() == True:
+            encrypted_string += key[alpha.index(text[i])]
+        else:
+            encrypted_string += text[i]
+    return encrypted_string
+
+"""
+def decrypted_text(text, key, alpha):
+    decrypted_string = ""
+    for i in range(len(text)):
+        if text[i].isalpha() == True:
+            decrypted_string += key[alpha.index(text[i])]
+        else:
+            decrypted_string += text[i]
+    return decrypted_string
+"""
 
 if __name__ == "__main__":
     main()
