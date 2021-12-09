@@ -5,8 +5,7 @@ def main():
     print("To encrypt a message type e, to decrypt type d")
     mode = input("Mode: ").lower()
     if mode != 'e' and mode != 'd':
-        print("Enter valid mode")
-        sys.exit(1)
+        sys.exit("Enter valid mode")
 
     # Grab cipher key
     cipher_key = input("Enter encryption key: ")

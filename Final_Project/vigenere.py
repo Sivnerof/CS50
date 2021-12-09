@@ -7,20 +7,17 @@ def main():
     print("To encrypt a message type e, to decrypt type d")
     mode = input("Mode: ").lower()
     if mode != 'e' and mode != 'd':
-        print("Enter valid mode")
-        sys.exit(1)
+        sys.exit("Enter valid mode")
 
     # Get key from user
     cipher_key = input("Enter encryption key: ").lower().replace(" ", "")
     if cipher_key.isalpha() == False:
-        print("Key must be alphabetical characters only")
-        sys.exit(1)
+        sys.exit("Key must be alphabetical characters only")
 
     # Get  plain or ciphertext from user
     user_text = input("Enter text: ").lower().replace(" ", "")
     if user_text.isalpha() == False and mode == 'e':
-        print("Text must be alphabetical characters only")
-        sys.exit(1)
+        sys.exit("Text must be alphabetical characters only")
 
     # Create cipherkey of same length as user text
     cipher_key = adjusted_length(cipher_key, len(user_text))
