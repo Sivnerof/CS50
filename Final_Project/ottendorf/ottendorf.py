@@ -46,19 +46,29 @@ def letter_coords(message, file):
             if lines.isspace() == False:
                 test.append(lines.upper())
 
-    testing = random.randrange(len(test))
-    print(test[testing])
-    if 'E' in test[testing]:
-        print("true") #
-        print(test[testing].index('E'))
-        print(testing)
-
     for i in range(len(message)):
         testing = random.randrange(len(test))
         if message[i] in test[testing]:
-            print(f"{message[i]} was found at position: {test[testing].index(message[i])} on line {testing}")
+            # Randomize spaces so they stop coming out at zero
+            word = 0
+            if message[i].isspace() == False:
+                for j in test[testing]:
+                    if j == " ":
+                        word += 1
+                    elif j == message[i]:
+                        break
+            print(f"{message[i]} was found at position: {test[testing].index(message[i])} on line {testing} it is word number {word}")
         else:
-            print(f"{message[i]} was not found on line: {testing}")
+            for k in range(len(test)):
+                if message[i] in test[k]:
+                    word = 0
+                    for l in test[k]:
+                        if l == " ":
+                            word += 1
+                        elif l == message[i]:
+                            break
+                    print(f"{message[i]} was found at position {test[k].index(message[i])} on line {k} it is word number {word}")
+                    break
 
 
 if __name__ == "__main__":
