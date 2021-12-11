@@ -40,34 +40,35 @@ def string_convert(message):
 
 
 def letter_coords(message, file):
-    test = []
+    file_strings = []
     with open(file) as f:
         for lines in f:
             if lines.isspace() == False:
-                test.append(lines.upper())
+                file_strings.append(lines.upper())
 
     for i in range(len(message)):
-        testing = random.randrange(len(test))
-        if message[i] in test[testing]:
+        rand_index = random.randrange(len(file_strings))
+        if message[i] in file_strings[rand_index]:
             # Randomize spaces so they stop coming out at zero
+            # Also remember to strip whitespace on both sides
             word = 0
             if message[i].isspace() == False:
-                for j in test[testing]:
+                for j in file_strings[rand_index]:
                     if j == " ":
                         word += 1
                     elif j == message[i]:
                         break
-            print(f"{message[i]} was found at position: {test[testing].index(message[i])} on line {testing} it is word number {word}")
+            print(f"{message[i]} was found at position: {file_strings[rand_index].index(message[i])} on line {rand_index} it is word number {word}")
         else:
-            for k in range(len(test)):
-                if message[i] in test[k]:
+            for k in range(len(file_strings)):
+                if message[i] in file_strings[k]:
                     word = 0
-                    for l in test[k]:
+                    for l in file_strings[k]:
                         if l == " ":
                             word += 1
                         elif l == message[i]:
                             break
-                    print(f"{message[i]} was found at position {test[k].index(message[i])} on line {k} it is word number {word}")
+                    print(f"{message[i]} was found at position {file_strings[k].index(message[i])} on line {k} it is word number {word}")
                     break
 
 
