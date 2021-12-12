@@ -1,69 +1,93 @@
 import sys
+import random
+import os
 
 def main():
-    # Get user intentions
+    # Get users intentions
     print("To encrypt a message type e, to decrypt type d")
     mode = input("Mode: ").lower()
     if mode != 'e' and mode != 'd':
         sys.exit("Enter valid mode")
 
-    # Grab cipher key
-    try:
-        cipher_key = int(input("Enter encryption key: "))
-        if cipher_key < 0:
-            sys.exit(1)
-    except:
-        sys.exit("Key must be a positive integer")
-    
-    # Get  plain or ciphertext from user
-    user_text = input("Enter text: ").lower()
-    
-    # Get ascii values of user provided text
-    user_text = ascii_values(user_text)
-    
-    # Encrypt
+    # Get user text file
+    file_name = input("Enter name of text file: ")
+    if os.path.isfile(file_name) == False:
+        sys.exit("File name does not exist")
+    elif file_name[len(file_name) - 4:] != ".txt":
+        sys.exit("File must be a .txt file")
+
+    # Get users message
     if mode == 'e':
-        result_text = encrypt_text(user_text, cipher_key)
+        user_message = input("Enter message: ").upper()
+        for i in range(len(user_message)):
+            if user_message[i].isalpha() == False and user_message[i].isspace() == False:
+                sys.exit("Message must only be alphabetical letters or spaces, no symbols or numbers.")
 
-    # Decrypt
-    if mode == 'd':
-        result_text = decrypt_text(user_text, cipher_key)
+        # Turn string into list
+        user_message = string_convert(user_message)
 
-    # Print results for user to a .txt file
-    with open("result.txt",'w',encoding = 'utf-8') as f:
-        f.write(result_text)
+        # Grab positions of letters in file
+        message_coords = letter_coords(user_message, file_name)
+
+        # Print to .txt file for user
+        encrypted_results(message_coords)
 
     sys.exit(0)
 
 
-def ascii_values(text):
-    ascii_list = []
-    for letters in range(len(text)):
-        if text[letters].isalpha():    
-            ascii_list.append(ord(text[letters]))
+def string_convert(message):
+    new_message = []
+    for i in range(len(message)):
+        new_message.append(message[i])
+    return new_message
+
+
+def letter_coords(message, file):
+    file_strings = []
+    with open(file) as f:
+        for lines in f:
+            if lines.isspace() == False:
+                file_strings.append(lines.upper().strip())
+    message_coordinates = []
+    for i in range(len(message)):
+        letter_coord = []
+        rand_index = random.randrange(len(file_strings))
+        if message[i] in file_strings[rand_index]:
+            word = 0
+            if message[i].isspace() == False:
+                for j in file_strings[rand_index]:
+                    if j == " ":
+                        word += 1
+                    elif j == message[i]:
+                        break
+            print(f"'{message[i]}' was found at line: {rand_index} word: {word} letter: {file_strings[rand_index].index(message[i])}")
+            letter_coord.append(rand_index)
+            letter_coord.append(word)
+            letter_coord.append(file_strings[rand_index].index(message[i]))
+            message_coordinates.append(letter_coord)
         else:
-            ascii_list.append(text[letters])
-    return ascii_list
+            for k in range(len(file_strings)):
+                if message[i] in file_strings[k]:
+                    word = 0
+                    for l in file_strings[k]:
+                        if l == " ":
+                            word += 1
+                        elif l == message[i]:
+                            break
+                    print(f"'{message[i]}' was found at line: {k} word: {word} letter: {file_strings[k].index(message[i])}")
+                    letter_coord.append(k)
+                    letter_coord.append(word)
+                    letter_coord.append(file_strings[k].index(message[i]))
+                    message_coordinates.append(letter_coord)
+                    break
+    return message_coordinates
 
 
-def encrypt_text(text, key):
-    encrypted_string = ""
-    for i in range(len(text)):
-        if type(text[i]) == int:
-            encrypted_string += chr((((text[i] + key) - ord('a')) % 26) + ord('a')) 
-        else:
-            encrypted_string += str(text[i])
-    return encrypted_string
-
-
-def decrypt_text(text, key):
-    decrypted_string = ""
-    for i in range(len(text)):
-        if type(text[i]) == int:
-            decrypted_string += chr((((text[i] - key) - ord('a')) % 26) + ord('a'))
-        else:
-            decrypted_string += str(text[i])
-    return decrypted_string
+def encrypted_results(message):
+    with open("encrypted.txt",'w',encoding = 'utf-8') as f:
+        for lines in message:
+            f.write(str(lines))
+            f.write('\n')
 
 
 if __name__ == "__main__":
