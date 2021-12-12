@@ -27,7 +27,10 @@ def main():
         user_message = string_convert(user_message)
 
         # Grab positions of letters in file
-        letter_coords(user_message, file_name)
+        message_coords = letter_coords(user_message, file_name)
+
+        # Print to .txt file for user
+        encrypted_results(message_coords)
 
     sys.exit(0)
 
@@ -44,13 +47,12 @@ def letter_coords(message, file):
     with open(file) as f:
         for lines in f:
             if lines.isspace() == False:
-                file_strings.append(lines.upper())
-
+                file_strings.append(lines.upper().strip())
+    message_coordinates = []
     for i in range(len(message)):
+        letter_coord = []
         rand_index = random.randrange(len(file_strings))
         if message[i] in file_strings[rand_index]:
-            # Randomize spaces so they stop coming out at zero
-            # Also remember to strip whitespace on both sides
             word = 0
             if message[i].isspace() == False:
                 for j in file_strings[rand_index]:
@@ -58,7 +60,11 @@ def letter_coords(message, file):
                         word += 1
                     elif j == message[i]:
                         break
-            print(f"{message[i]} was found at position: {file_strings[rand_index].index(message[i])} on line {rand_index} it is word number {word}")
+            print(f"'{message[i]}' was found at line: {rand_index} word: {word} letter: {file_strings[rand_index].index(message[i])}")
+            letter_coord.append(rand_index)
+            letter_coord.append(word)
+            letter_coord.append(file_strings[rand_index].index(message[i]))
+            message_coordinates.append(letter_coord)
         else:
             for k in range(len(file_strings)):
                 if message[i] in file_strings[k]:
@@ -68,8 +74,20 @@ def letter_coords(message, file):
                             word += 1
                         elif l == message[i]:
                             break
-                    print(f"{message[i]} was found at position {file_strings[k].index(message[i])} on line {k} it is word number {word}")
+                    print(f"'{message[i]}' was found at line: {k} word: {word} letter: {file_strings[k].index(message[i])}")
+                    letter_coord.append(k)
+                    letter_coord.append(word)
+                    letter_coord.append(file_strings[k].index(message[i]))
+                    message_coordinates.append(letter_coord)
                     break
+    return message_coordinates
+
+
+def encrypted_results(message):
+    with open("encrypted.txt",'w',encoding = 'utf-8') as f:
+        for lines in message:
+            f.write(str(lines))
+            f.write('\n')
 
 
 if __name__ == "__main__":
