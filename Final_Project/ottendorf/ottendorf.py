@@ -56,7 +56,7 @@ def letter_coords(message, file):
             word = 0
             if message[i].isspace() == False:
                 for j in file_strings[rand_index]:
-                    if j == " ":
+                    if j.isspace():
                         word += 1
                     elif j == message[i]:
                         break
